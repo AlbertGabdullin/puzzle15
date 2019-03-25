@@ -4,6 +4,13 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: 'SaucerBB';
+  src: url('assets/fonts/SaucerBB/SaucerBB.eot?#iefix') format('embedded-opentype'),  url('assets/fonts/SaucerBB/SaucerBB.woff') format('woff'), url('assets/fonts/SaucerBB/SaucerBB.ttf')  format('truetype'), url('assets/fonts/SaucerBB/SaucerBB.svg#SaucerBB') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .App {
   text-align: center;
 }
@@ -29,6 +36,10 @@
   color: #61dafb;
 }
 
+h1 {
+  font-family: 'Coming Soon', sans-serif;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -37,3 +48,6 @@
     transform: rotate(360deg);
   }
 }
+
+
+

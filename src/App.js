@@ -7,45 +7,47 @@ const Container = styled.div`
   position: relative;
   width: 440px;
   height: 440px;
-  background-color: rgba(50, 31, 64, 1);
+  background-color: #daf0e4;
+  border-radius: 10px;
+  margin: 0 auto;
+  
   > * {
     box-sizing: border-box;
   }
 `;
 
-const colors = [
-  'rgb(86, 161, 31)',
-  'rgb(255, 36, 121)',
-  'rgb(0, 153, 170)',
-  'rgb(255, 63, 0)',
-  'rgb(0, 153, 136)',
-  'rgb(62, 79, 188)',
-  'rgb(185, 59, 194)',
-  'rgb(0, 163, 56)',
-  'rgb(185, 59, 194)',
-  'rgb(0, 163, 56)',
-  'rgb(248, 26, 38)',
-  'rgb(0, 101, 199)',
-  'rgb(111, 51, 189)',
-  'rgb(0, 137, 215)',
-  'rgb(131, 119, 0)',
-]
+const FullContainer = styled.div`
+  height: 100vh;
+  width: 100%;
+  background-color: #fff3d8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const Tile = styled.div`
-  border: 1px solid #000;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: 'Coming Soon', sans-serif;
+  font-size: 35px;
+  line-height: 35px;
   z-index: 1;
   border-radius: 10px;
   width: 100%;
   height: 100%;
-  background: ${props => props.color};
+  background: rgba(255, 255, 165, 1);
+  border: 1px solid #50c0ce;
   
   ${props => props.noBorder && `
     border: none;
     z-index: -1;
   `}
+`;
+
+const HeadText = styled.h1`
+  fonz-size: 36px;
+  font-family: 'Coming Soon', sans-serif;
 `;
 
 const TileWrapper = styled.div`
@@ -55,15 +57,31 @@ const TileWrapper = styled.div`
   border-radius: 10px;
   padding: 5px;
   background: transparent;
+  
   ${props => props.noBorder && `
     z-index: -2;
   `}
 `;
 
+const Plug = styled.div`
+   height: 100%;
+   width: 100%;
+   border-radius: 10px;
+   background-color: #6dbecc;
+`;
+
+const PlugWrapper = styled.div`
+  position: absolute;
+  width: ${props => props.width}px;
+  height: ${props => props.height}px;
+  left: ${props => props.left}px;
+  top: ${props => props.right}px;
+  padding: 5px;
+`;
+
 
 
 class App extends Component {
-  tileRef = createRef();
   state = {
     size: [ 3,3 ],
     numbers: [
@@ -143,9 +161,30 @@ class App extends Component {
   };
 
   render() {
+    const padding = 20;
 
     const { numbers } = this.state;
     const { width, height } = this.state;
+
+    const plug = numbers.map((item, line) => {
+      console.log(item);
+      return item.map((el, column) => {
+        console.log(el);
+        const params = {
+          left: width * line + padding,
+          right: height * column + padding,
+        };
+        console.log(el);
+
+        return (
+          <PlugWrapper width={width} height={height} left={params.left} right={params.right}>
+            <Plug  />
+          </PlugWrapper>
+        );
+      })
+    });
+
+    console.log(plug);
 
     let newArray = [];
       numbers.forEach((item, line) => {
@@ -156,12 +195,12 @@ class App extends Component {
           column,
         };
         newArray.push(el);
-      })
+      });
     });
       const tiles = newArray.map((item, index) => {
         let style = {
-          tX: spring(width * (index % 4)),
-          tY: spring(height * (Math.floor(index / 4))),
+          tX: spring(width * (index % 4) + padding),
+          tY: spring(height * (Math.floor(index / 4)) + padding),
           width: width,
           height: height,
         };
@@ -189,63 +228,21 @@ class App extends Component {
                 transform: `translate(${tX}px,${tY}px) scale(1.0)`,
                 transition: `transform 100ms ease`,
               }}>
-                <Tile key={item.number}
-                      onClick={() => this.move(item.line,item.column)}
-                      color={colors[index]}
-                >
+                <Tile key={item.number} onClick={() => this.move(item.line,item.column)} >
                   {item.number}
                 </Tile>
               </TileWrapper>
             )}
           </Motion>
         )
-
-      })
-
-
-
-    // const numb = numbers.map((item, line) => {
-    //    return item.map((it, column)=> {
-    //       let style = {
-    //         tX: spring(column * width),
-    //         tY: spring(line * height),
-    //         width: width,
-    //         height: height,
-    //       };
-    //
-    //       if(numbers[line][column] === 0) return (
-    //         <Motion key={line + '-' + column} style={style}>
-    //           {({ tX, tY, width, height }) => (
-    //             <Tile key={line + ' ' + column} timeout={1000} noBorder style={{
-    //               width: width,
-    //               height: height,
-    //               transform: `translate3d(${tX}px,${tY}px,0) scale(1.0)`,
-    //               transition: `transform 1000ms ease`,
-    //             }}/>
-    //           )}
-    //
-    //         </Motion>
-    //       );
-    //       return (
-    //         <Motion key={line + '-' + column} style={style}>
-    //           {({ tX, tY, width, height }) => (
-    //             <Tile key={line + ' ' + column} timeout={1000} onClick={() => this.move(line, column)} style={{
-    //               width: width,
-    //               height: height,
-    //               transform: `translate3d(${tX}px,${tY}px,0) scale(1.0)`,
-    //               transition: `transform 1000ms ease`,
-    //             }}>{it}</Tile>
-    //           )}
-    //
-    //         </Motion>
-    //       )
-    //     });
-    // });
-    console.log(tiles);
+      });
     return (
-      <Container timeout={1000}>
-        {tiles}
-      </Container>
+      <FullContainer>
+        <Container timeout={1000}>
+          {plug}
+          {tiles}
+        </Container>
+      </FullContainer>
     );
   }
 }
