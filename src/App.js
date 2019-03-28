@@ -1,7 +1,7 @@
-import React, { Component, createRef } from 'react';
+import React, {Component, Fragment} from 'react';
 import styled from 'styled-components';
-import transition from 'styled-transition-group';
 import { Motion, spring } from 'react-motion';
+import Tile from './components/Tile';
 
 const Container = styled.div`
   position: relative;
@@ -25,42 +25,11 @@ const FullContainer = styled.div`
   align-items: center;
 `;
 
-const Tile = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Coming Soon', sans-serif;
-  font-size: 35px;
-  line-height: 35px;
-  z-index: 1;
-  border-radius: 10px;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 165, 1);
-  border: 1px solid #50c0ce;
-  
-  ${props => props.noBorder && `
-    border: none;
-    z-index: -1;
-  `}
-`;
+
 
 const HeadText = styled.h1`
   fonz-size: 36px;
   font-family: 'Coming Soon', sans-serif;
-`;
-
-const TileWrapper = styled.div`
-  position: absolute;
-  z-index: 1;
-  background: #fff;
-  border-radius: 10px;
-  padding: 5px;
-  background: transparent;
-  
-  ${props => props.noBorder && `
-    z-index: -2;
-  `}
 `;
 
 const Plug = styled.div`
@@ -79,9 +48,12 @@ const PlugWrapper = styled.div`
   padding: 5px;
 `;
 
-
-
 class App extends Component {
+  constructor (props) {
+    super(props);
+
+    document.addEventListener('keydown', this.keyDown);
+  }
   state = {
     size: [ 3,3 ],
     numbers: [
@@ -90,9 +62,11 @@ class App extends Component {
       [9,10,11,12],
       [13,14,15,0]
     ],
+    steps: [],
     width: 100,
     height: 100,
   };
+
   getNullCell = () => {
     const { numbers } = this.state;
     let obj = {};
@@ -108,55 +82,115 @@ class App extends Component {
     }
     return obj;
   };
-  move = (line, column) => {
-    console.log(line, column);
+
+  randomInteger = (min, max) => {
+    var rand = min - 0.5 + Math.random() * (max - min + 1)
+    rand = Math.round(rand);
+    return rand;
+  };
+
+  getMovePosition = (rand, nullPosition) => {
+    const { size } = this.state;
+    const { nullLine, nullCol } = nullPosition;
+    //get move direction
+    let left = true;
+    let right = true;
+    let top = true;
+    let bottom = true;
+    const columnMod = Math.abs(nullCol - (size[0]));
+    const lineMod = Math.abs(nullLine - (size[1]));
+
+    if(nullLine === 0) {
+      top = false;
+    }
+    if(nullCol === 0) {
+      left = false;
+    }
+    if(lineMod === 0) {
+      bottom = false;
+    }
+    if(columnMod === 0) {
+      right = false;
+    }
+    if(nullLine === 0 && nullCol === 0) {
+      top = false;
+      left = false;
+    }
+    if(columnMod === 0 && lineMod === 0) {
+      bottom = false;
+      right = false
+    }
+    if(nullLine === 0 && columnMod === 0) {
+      top = false;
+      right = false;
+    }
+    if(nullCol === 0 && lineMod === 0) {
+      bottom = false;
+      left = false;
+    }
+
+    //filter directions, which are not true
+    const directionKeys = ['right', 'top', 'bottom', 'left'];
+    const directions = [{top}, {right}, {bottom}, {left}];
+    const newDirections = directions.map(item=> {
+      let newDirection = null;
+      directionKeys.forEach(key => {
+        if(item[key]) {
+          newDirection = key;
+        };
+      });
+      return newDirection;
+    }).filter(item => item !== null);
+
+
+    const randDirectionIndex = this.randomInteger(0, newDirections.length - 1);
+    const randDirection = newDirections[randDirectionIndex];
+
+    //getPosition
+    if(randDirection === 'top') return [nullLine - 1, nullCol];
+    if(randDirection === 'right') return [nullLine, nullCol + 1];
+    if(randDirection === 'left') return [nullLine, nullCol- 1];
+    if(randDirection === 'bottom') return [nullLine + 1, nullCol];
+  };
+
+
+
+  shuffle = () => {
     const { numbers } = this.state;
+    const shuffleCount = this.randomInteger(150, 200);
+    for(let i = 0; i<shuffleCount; i++) {
+      const { nullLine, nullCol } = this.getNullCell();
+      const rand = this.randomInteger(1, 4);
+      const [ newLine, newCol ] = this.getMovePosition(rand, {nullLine, nullCol});
+      let temp = numbers[nullLine][nullCol];
+      numbers[nullLine][nullCol] = numbers[newLine][newCol];
+      numbers[newLine][newCol] = temp;
+      this.setState({
+        numbers,
+      });
+    }
+  };
+
+  jumpTo = (direction) => {
+    const { steps } = this.state;
+    if(direction === 'next') {
+
+    }
+  }
+
+  move = (line, column) => {
+    const { numbers, steps } = this.state;
     const { nullLine, nullCol } = this.getNullCell();
-    let up = false;
-    let left = false;
-    let right = false;
-    let down = false;
-    if(line === nullLine && column === nullCol + 1){
-      right = true;
+    const columnMod = Math.abs(column - nullCol);
+    const lineMod = Math.abs(line - nullLine);
+    if((line === nullLine && columnMod === 1) || (column === nullCol && lineMod === 1)){
       let temp = numbers[nullLine][nullCol];
       numbers[nullLine][nullCol] = numbers[line][column];
       numbers[line][column] = temp;
-      requestAnimationFrame(() => {
-        this.setState({
-          numbers,
-        });
-      });
-      return true;
-    }
-    if(line === nullLine && column === nullCol - 1) {
-      left = true;
-      let temp = numbers[nullLine][nullCol];
-      numbers[nullLine][nullCol] = numbers[line][column];
-      numbers[line][column] = temp;
+      steps.push(numbers);
       this.setState({
         numbers,
       });
-      return true;
-    }
-    if(column === nullCol && line === nullLine - 1) {
-      up = true;
-      let temp = numbers[nullLine][nullCol];
-      numbers[nullLine][nullCol] = numbers[line][column];
-      numbers[line][column] = temp;
-      this.setState({
-        numbers,
-      });
-      return true;
-    }
-    if(column === nullCol && line === nullLine + 1) {
-      down = true;
-      let temp = numbers[nullLine][nullCol];
-      numbers[nullLine][nullCol] = numbers[line][column];
-      numbers[line][column] = temp;
-      this.setState({
-        numbers,
-      });
-      return true;
     }
   };
 
@@ -167,14 +201,11 @@ class App extends Component {
     const { width, height } = this.state;
 
     const plug = numbers.map((item, line) => {
-      console.log(item);
       return item.map((el, column) => {
-        console.log(el);
         const params = {
           left: width * line + padding,
           right: height * column + padding,
         };
-        console.log(el);
 
         return (
           <PlugWrapper width={width} height={height} left={params.left} right={params.right}>
@@ -183,8 +214,6 @@ class App extends Component {
         );
       })
     });
-
-    console.log(plug);
 
     let newArray = [];
       numbers.forEach((item, line) => {
@@ -198,50 +227,46 @@ class App extends Component {
       });
     });
       const tiles = newArray.map((item, index) => {
-        let style = {
+
+        const style = {
           tX: spring(width * (index % 4) + padding),
           tY: spring(height * (Math.floor(index / 4)) + padding),
           width: width,
           height: height,
         };
 
-        if(item.number === 0) return (
-          <Motion key={item.number} style={style}>
-            {({ tX, tY, width, height }) => (
-              <TileWrapper noBorder style={{
-                width: width,
-                height: height,
-                transform: `translate3d(${tX}px,${tY}px,0) scale(1.0)`,
-                transition: `transform 100ms ease`,
-              }}>
-                <Tile key={item.number} noBorder />
-              </TileWrapper>
-            )}
-          </Motion>
-        );
-        return (
-          <Motion key={item.number} style={style}>
-            {({ tX, tY, width, height }) => (
-              <TileWrapper style={{
-                width: width,
-                height: height,
-                transform: `translate(${tX}px,${tY}px) scale(1.0)`,
-                transition: `transform 100ms ease`,
-              }}>
-                <Tile key={item.number} onClick={() => this.move(item.line,item.column)} >
-                  {item.number}
-                </Tile>
-              </TileWrapper>
-            )}
-          </Motion>
-        )
+          return (
+            <Motion key={item.number} style={style}>
+              {({ tX, tY, width, height }) => (
+                <Fragment>
+                  {
+                    item.number !== 0 && (
+                      <Tile
+                        item={item}
+                        index={index}
+                        width={width}
+                        height={height}
+                        padding={padding}
+                        move={this.move}
+                        keyDown={this.keyDown}
+                        key={index}
+                        tX={tX}
+                        tY={tY}
+                      />
+                    )
+                  }
+                </Fragment>
+              )}
+            </Motion>
+          )
       });
     return (
       <FullContainer>
-        <Container timeout={1000}>
+        <Container>
           {plug}
           {tiles}
         </Container>
+        <button onClick={this.shuffle}>new Game</button>
       </FullContainer>
     );
   }
