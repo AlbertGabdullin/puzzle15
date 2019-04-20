@@ -4,9 +4,8 @@ import {
   NEXT_STEP,
   PREV_STEP
 } from "../actions";
-import move from "../helpers/move";
-import shuffle from "../helpers/shuffle";
 import getNullCell from "../helpers/getNullCell";
+import getPosition from "../helpers/getMovePosition";
 
 const initialState = {
   matrix: [
@@ -23,9 +22,27 @@ const initialState = {
 const game = (state = initialState, action) => {
   switch(action.type) {
     case MOVE_TILE: {
-      const { line, column } = action.payload;
-      const { index, counter, matrix, steps, } = state;
-      const newMatrix = move(line, column, matrix);
+      let newMatrix = [];
+      const direction = action.payload;
+      const { index, counter, matrix, steps, size } = state;
+      const nullPosition = getNullCell(matrix);
+      const [line, column] = getPosition(direction, nullPosition);
+
+      if(line < 0 || column < 0 || line > size[0] || column > size[1]) {
+        return state;
+      }
+
+      const { nullLine, nullCol } = nullPosition;
+      const columnMod = Math.abs(column - nullCol);
+      const lineMod = Math.abs(line - nullLine);
+
+      if((line === nullLine && columnMod === 1) || (column === nullCol && lineMod === 1)){
+        const temp = matrix[nullLine][nullCol];
+        matrix[nullLine][nullCol] = matrix[line][column];
+        matrix[line][column] = temp;
+        newMatrix = matrix;
+      }
+      newMatrix = matrix;
 
       return {
         ...state,
@@ -40,8 +57,8 @@ const game = (state = initialState, action) => {
     }
 
     case NEW_GAME: {
-      const { matrix, size } = state;
-      const newMatrix = shuffle(matrix, size);
+      const { matrix } = state;
+      const newMatrix = action.payload;
       const { nullLine, nullCol } = getNullCell(matrix);
       return {
         ...state,
@@ -56,28 +73,51 @@ const game = (state = initialState, action) => {
       }
     }
     case NEXT_STEP: {
+      let newMatrix = [];
       const { index, steps, matrix } = state;
-      const lastIndex = steps.length - 1;
+      const lastIndex = steps.length > 0 ? steps.length - 1 : 0;
       const nextIndex = index < lastIndex ? index + 1 : lastIndex;
       const { line, column } = steps[nextIndex];
-      const newMatrix = move(line, column, matrix);
+
+      const { nullLine, nullCol } = getNullCell(matrix);
+      const columnMod = Math.abs(column - nullCol);
+      const lineMod = Math.abs(line - nullLine);
+
+      if((line === nullLine && columnMod === 1) || (column === nullCol && lineMod === 1)){
+        const temp = matrix[nullLine][nullCol];
+        matrix[nullLine][nullCol] = matrix[line][column];
+        matrix[line][column] = temp;
+        newMatrix = matrix;
+      }
+      newMatrix = matrix;
 
       return {
         ...state,
         matrix: [...newMatrix],
-        index: index + 1,
+        index: index < steps.length -1 ? index + 1 : steps.length - 1,
       };
     }
     case PREV_STEP: {
+      let newMatrix = [];
       const { index, steps, matrix } = state;
       const prevIndex = index > 0 ? index - 1 : 0;
       const { line, column } = steps[prevIndex];
-      const newMatrix = [...move(line, column, matrix)];
+      const { nullLine, nullCol } = getNullCell(matrix);
+      const columnMod = Math.abs(column - nullCol);
+      const lineMod = Math.abs(line - nullLine);
+
+      if((line === nullLine && columnMod === 1) || (column === nullCol && lineMod === 1)){
+        const temp = matrix[nullLine][nullCol];
+        matrix[nullLine][nullCol] = matrix[line][column];
+        matrix[line][column] = temp;
+        newMatrix = matrix;
+      }
+      newMatrix = matrix;
 
       return {
         ...state,
         matrix: [...newMatrix],
-        index: index - 1,
+        index: prevIndex,
       };
     }
     default:

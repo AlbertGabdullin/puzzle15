@@ -1,13 +1,16 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component, Fragment, createRef} from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Motion, spring } from 'react-motion';
-import {moveTile, newGame, nextStep, prevStep} from "../../actions";
+import { moveTile, newGame, nextStep, prevStep } from "../../actions";
 import Tile from '../../components/Tile';
 import Background from '../../static/background.svg';
 import Board from '../../static/board.svg';
 import Tools from "../../components/Tools";
-import type {GameMatrix, GameState} from "../../types";
+import type { GameMatrix, GameState } from "../../types";
+import shuffle from "../../helpers/shuffle";
+import getNullCell from "../../helpers/getNullCell";
+import getDirection from "../../helpers/getDirection";
 
 const Container = styled.div`
   position: relative;
@@ -48,6 +51,7 @@ type State = {
 }
 
 class BoardComponent extends Component<Props, State> {
+  keyRef = createRef();
   state = {
     width: 85,
     height: 85,
@@ -55,20 +59,49 @@ class BoardComponent extends Component<Props, State> {
 
   componentDidMount(): void {
     this.props.newGame();
+    this.keyRef.current.addEventListener('keydown', this.onKeyDown);
+    this.keyRef.current.focus();
+  }
+
+  onKeyDown = (e) => {
+    if(e.keyCode === 38) {
+      this.props.moveTile('top');
+    }
+    if(e.keyCode === 40) {
+      this.props.moveTile('bottom');
+    }
+    if(e.keyCode === 37) {
+      this.props.moveTile('left');
+    }
+    if(e.keyCode === 39) {
+      this.props.moveTile('right');
+    }
   }
 
   move = (line, column) => {
-    this.props.moveTile(line, column, this.props.numbers);
+    const { numbers } = this.props;
+    const { nullLine, nullCol } = getNullCell(numbers);
+    const movable = {
+      lineM: line,
+      columnM: column,
+    };
+    const nullable = {
+      lineN: nullLine,
+      columnN: nullCol,
+    };
+
+    const direction = getDirection(movable, nullable);
+    this.props.moveTile(direction);
   };
 
   render() {
     const padding = 30;
 
-    const { numbers } = this.props;
+    const { matrix } = this.props;
     const { width, height } = this.state;
 
     let newArray = [];
-    numbers.forEach((item, line) => {
+    matrix.forEach((item, line) => {
       item.forEach((child, column) => {
         const el =  {
           number: child,
@@ -114,7 +147,7 @@ class BoardComponent extends Component<Props, State> {
 
     const { prevStep, nextStep, newGame } = this.props;
     return (
-      <FullContainer>
+      <FullContainer ref={this.keyRef} tabIndex="1">
         <Container>
           {tiles}
         </Container>
@@ -129,17 +162,22 @@ class BoardComponent extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: GameState) => {
+  const { counter, matrix } = state.game;
+
   return {
-    numbers: state.game.matrix,
-    counter: state.game.counter,
+    matrix,
+    counter,
   }
 };
 
-const mapDispatchToProps = {
-  moveTile: moveTile,
-  newGame: newGame,
-  nextStep: nextStep,
-  prevStep: prevStep,
-};
+const mapDispatchToProps = (dispatch, ownProps) => {
+
+  return {
+    moveTile: (line, column) => dispatch(moveTile(line, column)),
+    newGame: () => dispatch(newGame(shuffle(ownProps.numbers, ownProps.size))),
+    nextStep: () => dispatch(nextStep()),
+    prevStep: () => dispatch(prevStep()),
+  }
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(BoardComponent);

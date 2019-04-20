@@ -1,6 +1,14 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Board from './containers/Board';
 
-const App = () => (<Board />)
+const App = props => (
+  <Board {...props} />
+);
 
-export default App;
+const mapStateToProps = state => ({
+  numbers: state.game.matrix,
+  size: state.game.size,
+});
+
+export default connect(mapStateToProps)(App);

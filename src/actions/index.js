@@ -8,14 +8,14 @@ export const MOVE_TILE = 'MOVE_TILE';
 export const NEXT_STEP = 'NEXT_STEP';
 export const PREV_STEP = 'PREV_STEP';
 
-export const newGame = ():GameState => ({
+export const newGame = (numbers: GameMatrix):GameState => ({
   type: NEW_GAME,
+  payload: numbers,
 });
 
-export const moveTile = (line, column, numbers):GameMatrix => ({
+export const moveTile = (direction):GameMatrix => ({
   type: MOVE_TILE,
-  payload: { line, column },
-  step: numbers
+  payload: direction
 });
 
 export const nextStep = ():GameState => ({
