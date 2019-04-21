@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "albertgabdullin.github.io/puzzle15/precache-manifest.a325cf4fe2cc0b0e486628d5c68aa691.js"
+  "/puzzle15/precache-manifest.60faa6b4e9e165ccd48e9c526be07469.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("albertgabdullin.github.io/puzzle15/index.html", {
+workbox.routing.registerNavigationRoute("/puzzle15/index.html", {
   
   blacklist: [/^\/_/,/\/[^\/]+\.[^\/]+$/],
 });
