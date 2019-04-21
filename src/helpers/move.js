@@ -1,6 +1,7 @@
 import getNullCell from "./getNullCell";
+import type { GameMatrix } from "../types";
 
-const move = (line, column, numbers) => {
+const move = (line: number, column: number, numbers: GameMatrix) => {
   const { nullLine, nullCol } = getNullCell(numbers);
   const columnMod = Math.abs(column - nullCol);
   const lineMod = Math.abs(line - nullLine);

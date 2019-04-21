@@ -14,10 +14,13 @@ import getDirection from "../../helpers/getDirection";
 
 const Container = styled.div`
   position: relative;
-  width: 400px;
-  height: 400px;
-  margin: 0 auto;
+  max-width: ${props => props.size}px;
+  max-height: ${props => props.size}px;
+  width: 100%;
+  height: 100%;
+  margin: 60px auto 0 auto;
   background-image: url(${Board});
+  background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
   margin-bottom: 20px;
@@ -28,15 +31,29 @@ const Container = styled.div`
 `;
 
 const FullContainer = styled.div`
+  position: relative;
   height: 100vh;
   width: 100%;
   display: flex;
   justify-content: center;
   flex-direction: column;
   background-image: url(${Background});
+  background-repeat: no-repeat;
   background-size: cover;
   align-items: center;
 `;
+
+const NewGame = styled.div`
+  position: absolute;
+  left: 6.25%;
+  top: 6.25%;
+  width: 87.5%;
+  height: 87.5%;
+  background-color: rgba(0, 0, 0, 1);
+  z-index: 10;
+`;
+
+
 
 type Props = {
   newGame: () => GameState,
@@ -51,17 +68,47 @@ type State = {
 }
 
 class BoardComponent extends Component<Props, State> {
-  keyRef = createRef();
   state = {
-    width: 85,
-    height: 85,
+    boardSize: 400,
+    width: 21.875,
+    height: 21.875,
   };
+
+  componentWillMount(): void {
+    this.resizeBoard();
+  }
 
   componentDidMount(): void {
     this.props.newGame();
-    this.keyRef.current.addEventListener('keydown', this.onKeyDown);
-    this.keyRef.current.focus();
+    document.addEventListener('keydown', this.onKeyDown);
+    window.addEventListener('resize', this.resizeBoard);
   }
+  componentWillUnmount(): void {
+    document.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('resize', this.resizeBoard);
+  }
+
+  resizeBoard = () => {
+    const { boardSize } = this.state;
+
+    const w = window,
+      d = document,
+      documentElement = d.documentElement,
+      body = d.getElementsByTagName('body')[0],
+      width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
+      height = w.innerHeight|| documentElement.clientHeight|| body.clientHeight;
+
+    if(boardSize > width) {
+      console.log(1234);
+      this.setState({
+        boardSize: width * 0.9,
+      });
+    } else {
+      this.setState({
+        boardSize: 400,
+      });
+    }
+  };
 
   onKeyDown = (e) => {
     if(e.keyCode === 38) {
@@ -95,10 +142,8 @@ class BoardComponent extends Component<Props, State> {
   };
 
   render() {
-    const padding = 30;
-
     const { matrix } = this.props;
-    const { width, height } = this.state;
+    const { width, height, boardSize } = this.state;
 
     let newArray = [];
     matrix.forEach((item, line) => {
@@ -111,13 +156,14 @@ class BoardComponent extends Component<Props, State> {
         newArray.push(el);
       });
     });
-    const tiles = newArray.map((item, index) => {
+    const padding = boardSize * (6.25 / 100);
 
+    const tiles = newArray.map((item, index) => {
       const style = {
-        tX: spring(width * (index % 4) + padding),
-        tY: spring(height * (Math.floor(index / 4)) + padding),
-        width: width,
-        height: height,
+        tX: spring(boardSize * (width / 100) * (index % 4) + padding),
+        tY: spring(boardSize * (height / 100) * (Math.floor(index / 4)) + padding),
+        width: boardSize * (width / 100),
+        height: boardSize * (height / 100),
       };
 
       return (
@@ -147,9 +193,10 @@ class BoardComponent extends Component<Props, State> {
 
     const { prevStep, nextStep, newGame } = this.props;
     return (
-      <FullContainer ref={this.keyRef} tabIndex="1">
-        <Container>
+      <FullContainer tabIndex="1">
+        <Container size={boardSize}>
           {tiles}
+          {/*<NewGame />*/}
         </Container>
         <Tools
           newGame={newGame}

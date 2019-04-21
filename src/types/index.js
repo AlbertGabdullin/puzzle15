@@ -1,4 +1,5 @@
 //@flow
+
 export type GameMatrix = Array<Array<number>>;
 
 export type GameState = {
@@ -6,4 +7,9 @@ export type GameState = {
   counter: number,
   index: number,
   steps: Array<{line: number, column: number}>,
+}
+
+export type NullCell = {
+  nullLine: number,
+  nullColumn: number,
 }

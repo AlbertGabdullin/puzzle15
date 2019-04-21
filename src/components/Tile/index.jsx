@@ -14,6 +14,8 @@ const TileWrapper = styled.div`
   padding: 5px;
   background: transparent;
   cursor: pointer;
+  width: 21.875%;
+  height: 21.875%;
   
   ${props => props.noBorder && `
     z-index: -2;
@@ -34,11 +36,16 @@ const Square = styled.div`
   background-image: url(${numberBackground});
   background-size: contain;
   background-repeat: no-repeat;
-  
+ 
   ${props => props.noBorder && `
     border: none;
     z-index: -1;
   `}
+  
+  @media(max-width: 400px) {
+    font-size: 30px;
+    line-height: 30px;
+  }
 `;
 
 type Props = {
@@ -68,8 +75,6 @@ const Tile = ({
     <TileWrapper
       onClick={() => !noBorder && move(item.line, item.column)}
       style={{
-      width: width,
-      height: height,
       transform: `translate(${tX}px,${tY}px) scale(1.0)`,
       transition: `transform 100ms ease`,
     }}>

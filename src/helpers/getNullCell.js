@@ -1,4 +1,6 @@
-const getNullCell = numbers => {
+import type { GameMatrix, NullCell} from "../types";
+
+const getNullCell = (numbers: GameMatrix):NullCell => {
   let obj = {};
   for(let i = 0; i < numbers.length; i++) {
     for(let j = 0; j < numbers[i].length; j++) {

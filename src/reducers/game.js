@@ -62,7 +62,7 @@ const game = (state = initialState, action) => {
       const { nullLine, nullCol } = getNullCell(matrix);
       return {
         ...state,
-        matrix: newMatrix,
+        matrix: [...newMatrix],
         counter: 0,
         steps: [
           {

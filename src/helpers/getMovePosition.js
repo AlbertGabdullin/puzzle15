@@ -1,4 +1,4 @@
-const getPosition = (direction, nullPosition) => {
+const getPosition = (direction: string, nullPosition: Object<number, number>) => {
   const { nullLine, nullCol } = nullPosition;
 
   switch(direction) {
