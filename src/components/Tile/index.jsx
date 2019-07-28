@@ -1,10 +1,8 @@
 // @flow
-import React from 'react';
+import React from "react";
 import styled from "styled-components";
-import numberBackground from '../../static/numberBackground.svg';
-import type {
-  GameMatrix
-} from "../../types";
+import numberBackground from "../../static/numberBackground.svg";
+import type { GameMatrix } from "../../types";
 
 const TileWrapper = styled.div`
   position: absolute;
@@ -14,10 +12,12 @@ const TileWrapper = styled.div`
   padding: 5px;
   background: transparent;
   cursor: pointer;
-  width: 21.875%;
-  height: 21.875%;
-  
-  ${props => props.noBorder && `
+  width: calc((100%) / 4);
+  height: calc((100%) / 4);
+
+  ${props =>
+    props.noBorder &&
+    `
     z-index: -2;
   `}
 `;
@@ -26,7 +26,7 @@ const Square = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Coming Soon', sans-serif;
+  font-family: "Coming Soon", sans-serif;
   font-size: 35px;
   line-height: 35px;
   z-index: 1;
@@ -36,12 +36,14 @@ const Square = styled.div`
   background-image: url(${numberBackground});
   background-size: contain;
   background-repeat: no-repeat;
- 
-  ${props => props.noBorder && `
+
+  ${props =>
+    props.noBorder &&
+    `
     border: none;
     z-index: -1;
   `}
-  
+
   @media(max-width: 400px) {
     font-size: 30px;
     line-height: 30px;
@@ -58,33 +60,21 @@ type Props = {
   item: {
     line: number,
     column: number,
-    number: number,
+    number: number
   }
-}
+};
 
-const Tile = ({
-  item,
-  noBorder,
-  move,
-  width,
-  height,
-  tX,
-  tY,
-}: Props) => {
+const Tile = ({ item, noBorder, move, tX, tY }) => {
   return (
     <TileWrapper
       onClick={() => !noBorder && move(item.line, item.column)}
       style={{
-      transform: `translate(${tX}px,${tY}px) scale(1.0)`,
-      transition: `transform 100ms ease`,
-    }}>
-      <Square key={item.number}  >
-        {!noBorder && item.number}
-      </Square>
+        transform: `translate(${tX}px,${tY}px) scale(1.0)`,
+      }}
+    >
+      <Square key={item.number}>{!noBorder && item.number}</Square>
     </TileWrapper>
   );
-}
-
-
+};
 
 export default Tile;
