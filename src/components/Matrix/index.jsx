@@ -12,7 +12,6 @@ const getStyles = memoize(
 );
 
 const Matrix = ({ matrix, width, height, boardSize, move }) => {
-
   const newArray = [];
   matrix.forEach((item, line) => {
     item.forEach((child, column) => {

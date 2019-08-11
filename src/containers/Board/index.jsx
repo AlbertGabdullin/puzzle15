@@ -2,7 +2,6 @@ import React, { Component, createRef } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { moveTile, newGame, nextStep, prevStep } from "../../actions";
-import Tile from "../../components/Tile";
 import Background from "../../static/background.svg";
 import Board from "../../static/board.svg";
 import Tools from "../../components/Tools";
@@ -11,6 +10,7 @@ import shuffle from "../../helpers/shuffle";
 import getNullCell from "../../helpers/getNullCell";
 import getDirection from "../../helpers/getDirection";
 import Matrix from "../../components/Matrix";
+import TouchHoc from "../../hoc/useGetDirection";
 
 const Container = styled.div`
   position: relative;
@@ -65,6 +65,7 @@ const MatrixContainer = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
+  touch-action: none;
 `;
 
 type Props = {
@@ -86,7 +87,6 @@ class BoardComponent extends Component<Props, State> {
   componentDidMount(): void {
     this.props.newGame();
     const boardSize = this.innerContainer.current.clientWidth;
-    console.log(boardSize);
     const width = boardSize / 4;
     const height = boardSize / 4;
 
@@ -95,11 +95,10 @@ class BoardComponent extends Component<Props, State> {
       width,
       height
     });
-    document.addEventListener("keydown", this.onKeyDown);
+
     window.addEventListener("resize", this.resizeBoard);
   }
   componentWillUnmount(): void {
-    document.removeEventListener("keydown", this.onKeyDown);
     window.removeEventListener("resize", this.resizeBoard);
   }
 
@@ -115,21 +114,6 @@ class BoardComponent extends Component<Props, State> {
     });
   };
 
-  onKeyDown = e => {
-    if (e.keyCode === 38) {
-      this.props.moveTile("top");
-    }
-    if (e.keyCode === 40) {
-      this.props.moveTile("bottom");
-    }
-    if (e.keyCode === 37) {
-      this.props.moveTile("left");
-    }
-    if (e.keyCode === 39) {
-      this.props.moveTile("right");
-    }
-  };
-
   move = (line, column) => {
     const { numbers } = this.props;
     const { nullLine, nullCol } = getNullCell(numbers);
@@ -143,6 +127,7 @@ class BoardComponent extends Component<Props, State> {
     };
 
     const direction = getDirection(movable, nullable);
+    console.log(direction);
     this.props.moveTile(direction);
   };
 
@@ -162,6 +147,7 @@ class BoardComponent extends Component<Props, State> {
                 boardSize={boardSize}
                 matrix={matrix}
                 move={this.move}
+                direction={this.props.direction}
               />
             )}
           </MatrixContainer>
@@ -173,17 +159,18 @@ class BoardComponent extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: GameState) => {
-  const { counter, matrix } = state.game;
+  const { counter, matrix, steps } = state.game;
 
   return {
     matrix,
-    counter
+    counter,
+    steps,
   };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    moveTile: (line, column) => dispatch(moveTile(line, column)),
+    moveTile: (direction) => dispatch(moveTile(direction)),
     newGame: () => dispatch(newGame(shuffle(ownProps.numbers, ownProps.size))),
     nextStep: () => dispatch(nextStep()),
     prevStep: () => dispatch(prevStep())
@@ -193,4 +180,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(BoardComponent);
+)(TouchHoc(BoardComponent));
