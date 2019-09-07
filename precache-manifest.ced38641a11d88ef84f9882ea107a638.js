@@ -4,6 +4,10 @@ self.__precacheManifest = [
     "url": "/puzzle15/static/media/numberBackground.d63d02fd.svg"
   },
   {
+    "revision": "885ded4484de9d5e9d34abf2d65b34aa",
+    "url": "/puzzle15/static/media/close.885ded44.svg"
+  },
+  {
     "revision": "9203b416b5aa697c72080ee28a119490",
     "url": "/puzzle15/static/media/button.9203b416.svg"
   },
@@ -20,19 +24,19 @@ self.__precacheManifest = [
     "url": "/puzzle15/static/js/runtime~main.9b891d03.js"
   },
   {
-    "revision": "44038fc408a5d0b4db43",
-    "url": "/puzzle15/static/js/main.6e3e57d2.chunk.js"
+    "revision": "82ba296a2cd386918b26",
+    "url": "/puzzle15/static/js/main.e8fe7f76.chunk.js"
   },
   {
-    "revision": "c6fb29c9bf6ce1943635",
-    "url": "/puzzle15/static/js/2.b443d0b4.chunk.js"
+    "revision": "12061b5230eee9fb8984",
+    "url": "/puzzle15/static/js/2.012fe1fa.chunk.js"
   },
   {
-    "revision": "44038fc408a5d0b4db43",
-    "url": "/puzzle15/static/css/main.8bd3222a.chunk.css"
+    "revision": "82ba296a2cd386918b26",
+    "url": "/puzzle15/static/css/main.5837b776.chunk.css"
   },
   {
-    "revision": "fe4f11b5e2f16d884fb4dd24052085b7",
+    "revision": "0a9c1fe010fd052b064bb1aa8e9319dc",
     "url": "/puzzle15/index.html"
   }
 ];
