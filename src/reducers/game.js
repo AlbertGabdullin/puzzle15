@@ -1,26 +1,19 @@
-import {
-  MOVE_TILE,
-  NEW_GAME,
-  NEXT_STEP,
-  PREV_STEP
-} from "../actions";
+import { MOVE_TILE, NEW_GAME, NEXT_STEP, PREV_STEP } from "../actions";
 import getNullCell from "../helpers/getNullCell";
 import getPosition from "../helpers/getMovePosition";
+import { MATRIX } from "../consts/matrix";
+import shuffle from "../helpers/shuffle";
 
 const initialState = {
-  matrix: [
-    [1,2,3,4],
-    [5,6,7,8],
-    [9,10,11,12],
-    [13,14,15,0],
-  ],
+  matrix: shuffle(MATRIX.map((item: Array<number>) => [...item]), [3, 3]),
+  isStarted: false,
   steps: [],
-  size: [3,3],
-  index: 0,
+  size: [3, 3],
+  index: 0
 };
 
 const game = (state = initialState, action) => {
-  switch(action.type) {
+  switch (action.type) {
     case MOVE_TILE: {
       let newMatrix = [];
       const direction = action.payload;
@@ -28,7 +21,7 @@ const game = (state = initialState, action) => {
       const nullPosition = getNullCell(matrix);
       const [line, column] = getPosition(direction, nullPosition);
 
-      if(line < 0 || column < 0 || line > size[0] || column > size[1]) {
+      if (line < 0 || column < 0 || line > size[0] || column > size[1]) {
         return state;
       }
 
@@ -36,7 +29,10 @@ const game = (state = initialState, action) => {
       const columnMod = Math.abs(column - nullCol);
       const lineMod = Math.abs(line - nullLine);
 
-      if((line === nullLine && columnMod === 1) || (column === nullCol && lineMod === 1)){
+      if (
+        (line === nullLine && columnMod === 1) ||
+        (column === nullCol && lineMod === 1)
+      ) {
         const temp = matrix[nullLine][nullCol];
         matrix[nullLine][nullCol] = matrix[line][column];
         matrix[line][column] = temp;
@@ -46,13 +42,10 @@ const game = (state = initialState, action) => {
 
       return {
         ...state,
-        matrix: newMatrix,
+        matrix: [...newMatrix],
         counter: counter + 1,
         index: index + 1,
-        steps: [
-          ...steps,
-          { line, column },
-        ],
+        steps: [...steps, { line, column }]
       };
     }
 
@@ -64,13 +57,14 @@ const game = (state = initialState, action) => {
         ...state,
         matrix: [...newMatrix],
         counter: 0,
+        isStarted: true,
         steps: [
           {
             line: nullLine,
-            column: nullCol,
-          },
-         ]
-      }
+            column: nullCol
+          }
+        ]
+      };
     }
     case NEXT_STEP: {
       let newMatrix = [];
@@ -83,7 +77,10 @@ const game = (state = initialState, action) => {
       const columnMod = Math.abs(column - nullCol);
       const lineMod = Math.abs(line - nullLine);
 
-      if((line === nullLine && columnMod === 1) || (column === nullCol && lineMod === 1)){
+      if (
+        (line === nullLine && columnMod === 1) ||
+        (column === nullCol && lineMod === 1)
+      ) {
         const temp = matrix[nullLine][nullCol];
         matrix[nullLine][nullCol] = matrix[line][column];
         matrix[line][column] = temp;
@@ -94,7 +91,7 @@ const game = (state = initialState, action) => {
       return {
         ...state,
         matrix: [...newMatrix],
-        index: index < steps.length -1 ? index + 1 : steps.length - 1,
+        index: index < steps.length - 1 ? index + 1 : steps.length - 1
       };
     }
     case PREV_STEP: {
@@ -106,7 +103,10 @@ const game = (state = initialState, action) => {
       const columnMod = Math.abs(column - nullCol);
       const lineMod = Math.abs(line - nullLine);
 
-      if((line === nullLine && columnMod === 1) || (column === nullCol && lineMod === 1)){
+      if (
+        (line === nullLine && columnMod === 1) ||
+        (column === nullCol && lineMod === 1)
+      ) {
         const temp = matrix[nullLine][nullCol];
         matrix[nullLine][nullCol] = matrix[line][column];
         matrix[line][column] = temp;
@@ -117,7 +117,7 @@ const game = (state = initialState, action) => {
       return {
         ...state,
         matrix: [...newMatrix],
-        index: prevIndex,
+        index: prevIndex
       };
     }
     default:

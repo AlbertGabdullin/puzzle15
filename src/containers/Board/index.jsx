@@ -1,4 +1,4 @@
-import React, { Component, createRef } from "react";
+import React, { Component, createRef, Fragment } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { moveTile, newGame, nextStep, prevStep } from "../../actions";
@@ -11,23 +11,19 @@ import getNullCell from "../../helpers/getNullCell";
 import getDirection from "../../helpers/getDirection";
 import Matrix from "../../components/Matrix";
 import TouchHoc from "../../hoc/useGetDirection";
+import WinnerDialog from "../WinnerDialog";
 
 const Container = styled.div`
   position: relative;
   width: 400px;
   height: 400px;
   padding: 25px;
-  margin: 60px auto 0 auto;
   background-image: url(${Board});
   background-repeat: no-repeat;
   background-size: contain;
-  background-position: center;
+  background-position: center center;
   margin-bottom: 20px;
   box-sizing: border-box;
-
-  > * {
-    box-sizing: border-box;
-  }
 
   @media (max-width: 768px) {
     max-width: 300px;
@@ -35,6 +31,11 @@ const Container = styled.div`
     max-height: 300px;
     height: 100%;
     padding: 20px;
+    background-position: center center;
+  }
+  
+  @media (max-height: 500px) {
+    margin-bottom: 0;
   }
 `;
 
@@ -48,17 +49,25 @@ const FullContainer = styled.div`
   background-image: url(${Background});
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center center;
   align-items: center;
+
+  @media (max-height: 500px) {
+    flex-direction: row;
+  }
 `;
 
 const NewGame = styled.div`
   position: absolute;
-  left: 6.25%;
-  top: 6.25%;
-  width: 87.5%;
-  height: 87.5%;
-  background-color: rgba(0, 0, 0, 1);
-  z-index: 10;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
 `;
 
 const MatrixContainer = styled.div`
@@ -85,7 +94,7 @@ class BoardComponent extends Component<Props, State> {
   state = {};
 
   componentDidMount(): void {
-    this.props.newGame();
+    //this.props.newGame();
     const boardSize = this.innerContainer.current.clientWidth;
     const width = boardSize / 4;
     const height = boardSize / 4;
@@ -127,7 +136,6 @@ class BoardComponent extends Component<Props, State> {
     };
 
     const direction = getDirection(movable, nullable);
-    console.log(direction);
     this.props.moveTile(direction);
   };
 
@@ -136,41 +144,50 @@ class BoardComponent extends Component<Props, State> {
     const { width, height, boardSize } = this.state;
 
     const { prevStep, nextStep, newGame } = this.props;
+
     return (
       <FullContainer tabIndex="1">
         <Container size={boardSize}>
           <MatrixContainer ref={this.innerContainer}>
-            {width && height && boardSize && (
-              <Matrix
-                width={width}
-                height={height}
-                boardSize={boardSize}
-                matrix={matrix}
-                move={this.move}
-                direction={this.props.direction}
-              />
+            {this.props.isStarted ? (
+              <Fragment>
+                {width && height && boardSize && (
+                  <Matrix
+                    width={width}
+                    height={height}
+                    boardSize={boardSize}
+                    matrix={matrix}
+                    move={this.move}
+                    direction={this.props.direction}
+                  />
+                )}
+              </Fragment>
+            ) : (
+              <NewGame onClick={newGame}>New Game</NewGame>
             )}
           </MatrixContainer>
         </Container>
         <Tools newGame={newGame} prevStep={prevStep} nextStep={nextStep} />
+        <WinnerDialog />
       </FullContainer>
     );
   }
 }
 
 const mapStateToProps = (state: GameState) => {
-  const { counter, matrix, steps } = state.game;
+  const { counter, matrix, steps, isStarted } = state.game;
 
   return {
     matrix,
     counter,
     steps,
+    isStarted,
   };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    moveTile: (direction) => dispatch(moveTile(direction)),
+    moveTile: direction => dispatch(moveTile(direction)),
     newGame: () => dispatch(newGame(shuffle(ownProps.numbers, ownProps.size))),
     nextStep: () => dispatch(nextStep()),
     prevStep: () => dispatch(prevStep())
