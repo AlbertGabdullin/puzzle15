@@ -17,6 +17,7 @@
     "react-transition-group": "^2.7.0",
     "redux": "^4.0.1",
     "serve": "^11.1.0",
+    "sfcookies": "^1.0.2",
     "styled-components": "^4.1.3",
     "styled-transition-group": "^1.0.0",
     "use-onclickoutside": "^0.3.1"

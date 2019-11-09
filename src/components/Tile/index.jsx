@@ -1,5 +1,5 @@
 // @flow
-import React, { useRef } from "react";
+import React from "react";
 import styled from "styled-components";
 import numberBackground from "../../static/numberBackground.svg";
 import type { GameMatrix } from "../../types";
@@ -14,12 +14,6 @@ const TileWrapper = styled.div`
   cursor: pointer;
   width: calc((100%) / 4);
   height: calc((100%) / 4);
-
-  ${props =>
-    props.noBorder &&
-    `
-    z-index: -2;
-  `}
 `;
 
 const Square = styled.div`
@@ -37,13 +31,6 @@ const Square = styled.div`
   background-size: contain;
   background-repeat: no-repeat;
 
-  ${props =>
-    props.noBorder &&
-    `
-    border: none;
-    z-index: -1;
-  `}
-
   @media(max-width: 400px) {
     font-size: 30px;
     line-height: 30px;
@@ -54,9 +41,6 @@ type Props = {
   move: (line: number, column: number) => GameMatrix,
   tX: number,
   tY: number,
-  height: number,
-  width: number,
-  noBorder: boolean,
   item: {
     line: number,
     column: number,
@@ -64,15 +48,15 @@ type Props = {
   }
 };
 
-const Tile = ({ item, noBorder, move, tX, tY }) => {
+const Tile = ({ item, move, tX, tY }: Props) => {
   return (
     <TileWrapper
-      onClick={() => !noBorder && move(item.line, item.column)}
+      onClick={() => move(item.line, item.column)}
       style={{
         transform: `translate(${tX}px,${tY}px) scale(1.0)`,
       }}
     >
-      <Square key={item.number}>{!noBorder && item.number}</Square>
+      <Square key={item.number}>{item.number}</Square>
     </TileWrapper>
   );
 };

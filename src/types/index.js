@@ -7,6 +7,7 @@ export type GameState = {
   counter: number,
   index: number,
   steps: Array<{line: number, column: number}>,
+  size: [number, number],
 }
 
 export type NullCell = {

@@ -2,7 +2,7 @@
 import randomInteger from "./randomInteger";
 import getNullCell from "./getNullCell";
 
-const getMovePosition = (nullLine: number, nullCol: number, size: Array<number>) => {
+const getMovePosition = (nullLine: number, nullCol: number, size: [number, number]) => {
   let left = true;
   let right = true;
   let top = true;
@@ -45,6 +45,7 @@ const getMovePosition = (nullLine: number, nullCol: number, size: Array<number>)
   const newDirections = directions.map(item=> {
     let newDirection = null;
     directionKeys.forEach(key => {
+      // $FlowFixMe
       if(item[key]) newDirection = key;
     });
     return newDirection;
@@ -58,9 +59,11 @@ const getMovePosition = (nullLine: number, nullCol: number, size: Array<number>)
   if(randDirection === 'right') return [nullLine, nullCol + 1];
   if(randDirection === 'left') return [nullLine, nullCol- 1];
   if(randDirection === 'bottom') return [nullLine + 1, nullCol];
+
+  return [];
 };
 
-const shuffle = (numbers, size) => {
+const shuffle = (numbers: Array<Array<number>>, size: [number, number]) => {
   const shuffleCount = randomInteger(150, 200);
   for(let i = 0; i<shuffleCount; i++) {
     const { nullLine, nullCol } = getNullCell(numbers);

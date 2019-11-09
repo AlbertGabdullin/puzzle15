@@ -94,7 +94,6 @@ class BoardComponent extends Component<Props, State> {
   state = {};
 
   componentDidMount(): void {
-    //this.props.newGame();
     const boardSize = this.innerContainer.current.clientWidth;
     const width = boardSize / 4;
     const height = boardSize / 4;
