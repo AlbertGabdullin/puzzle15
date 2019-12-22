@@ -2,7 +2,7 @@ import React, { Component, createRef, Fragment } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { moveTile, newGame, nextStep, prevStep } from "../../actions";
-import Background from "../../static/background.svg";
+import Background from "../../static/gamebackground.jpg";
 import Board from "../../static/board.svg";
 import Tools from "../../components/Tools";
 import type { GameMatrix, GameState } from "../../types";
