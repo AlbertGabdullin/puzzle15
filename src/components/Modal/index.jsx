@@ -1,7 +1,7 @@
 // @flow
-import React, { useRef } from "react";
-import styled from "styled-components";
-import useOnClickOutside from "use-onclickoutside";
+import React, { useRef } from 'react';
+import styled from 'styled-components';
+import useOnClickOutside from 'use-onclickoutside';
 import Close from '../../static/close.svg';
 
 const ModalWrapper = styled.div`
@@ -43,9 +43,9 @@ const Content = styled.div`
 type Props = {
   children: React$Node,
   onClose: () => void,
-}
+};
 
-const Modal = ({children, onClose}: Props) => {
+const Modal = ({ children, onClose }: Props) => {
   const modalRef = useRef(null);
   useOnClickOutside(modalRef, onClose);
   return (

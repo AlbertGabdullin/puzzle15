@@ -29,7 +29,9 @@
     "eject": "react-scripts eject",
     "flow": "flow",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "lint": "eslint --ext js,jsx ./src",
+    "lint:fix": "yarn run lint --fix"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -41,12 +43,15 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "babel-eslint": "^9.0.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-flowtype": "^3.4.2",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "prettier": "1.16.4"
   },
   "homepage": "https://albertgabdullin.github.io/puzzle15"

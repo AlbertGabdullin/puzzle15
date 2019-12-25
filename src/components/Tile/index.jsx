@@ -1,8 +1,7 @@
 // @flow
-import React from "react";
-import styled from "styled-components";
-import numberBackground from "../../static/numberBackground.svg";
-import type { GameMatrix } from "../../types";
+import React from 'react';
+import styled from 'styled-components';
+import numberBackground from '../../static/numberBackground.svg';
 
 const TileWrapper = styled.div`
   position: absolute;
@@ -20,7 +19,7 @@ const Square = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Coming Soon", sans-serif;
+  font-family: 'Coming Soon', sans-serif;
   font-size: 35px;
   line-height: 35px;
   z-index: 1;
@@ -31,34 +30,32 @@ const Square = styled.div`
   background-size: contain;
   background-repeat: no-repeat;
 
-  @media(max-width: 400px) {
+  @media (max-width: 400px) {
     font-size: 30px;
     line-height: 30px;
   }
 `;
 
 type Props = {
-  move: (line: number, column: number) => GameMatrix,
+  move: (line: number, column: number) => void,
   tX: number,
   tY: number,
   item: {
     line: number,
     column: number,
-    number: number
-  }
+    number: number,
+  },
 };
 
-const Tile = ({ item, move, tX, tY }: Props) => {
-  return (
-    <TileWrapper
-      onClick={() => move(item.line, item.column)}
-      style={{
-        transform: `translate(${tX}px,${tY}px) scale(1.0)`,
-      }}
-    >
-      <Square key={item.number}>{item.number}</Square>
-    </TileWrapper>
-  );
-};
+const Tile = ({ item, move, tX, tY }: Props) => (
+  <TileWrapper
+    onClick={() => move(item.line, item.column)}
+    style={{
+      transform: `translate(${tX}px,${tY}px) scale(1.0)`,
+    }}
+  >
+    <Square key={item.number}>{item.number}</Square>
+  </TileWrapper>
+);
 
 export default Tile;

@@ -1,17 +1,18 @@
-import React, { Component, createRef, Fragment } from "react";
-import { connect } from "react-redux";
-import styled from "styled-components";
-import { moveTile, newGame, nextStep, prevStep } from "../../actions";
-import Background from "../../static/gamebackground.jpg";
-import Board from "../../static/board.svg";
-import Tools from "../../components/Tools";
-import type { GameMatrix, GameState } from "../../types";
-import shuffle from "../../helpers/shuffle";
-import getNullCell from "../../helpers/getNullCell";
-import getDirection from "../../helpers/getDirection";
-import Matrix from "../../components/Matrix";
-import TouchHoc from "../../hoc/useGetDirection";
-import WinnerDialog from "../WinnerDialog";
+// @flow
+import React, { Component, createRef, Fragment } from 'react';
+import { connect } from 'react-redux';
+import styled from 'styled-components';
+import { moveTile, newGame, nextStep, prevStep } from '../../actions';
+import Background from '../../static/gamebackground.jpg';
+import Board from '../../static/board.svg';
+import Tools from '../../components/Tools';
+import type { GameMatrix } from '../../types';
+import shuffle from '../../helpers/shuffle';
+import getNullCell from '../../helpers/getNullCell';
+import getDirection from '../../helpers/getDirection';
+import Matrix from '../../components/Matrix';
+import TouchHoc from '../../hoc/useGetDirection';
+import WinnerDialog from '../WinnerDialog';
 
 const Container = styled.div`
   position: relative;
@@ -33,7 +34,7 @@ const Container = styled.div`
     padding: 20px;
     background-position: center center;
   }
-  
+
   @media (max-height: 500px) {
     margin-bottom: 0;
   }
@@ -78,122 +79,138 @@ const MatrixContainer = styled.div`
 `;
 
 type Props = {
-  newGame: () => GameState,
-  nextStep: () => GameState,
-  prevStep: () => GameState,
-  moveTile: () => GameMatrix
+  startNewGame: () => void,
+  next: () => void,
+  prev: () => void,
+  move: string => GameMatrix,
+  isStarted: boolean,
+  direction: string,
+  numbers: GameMatrix,
 };
 
 type State = {
   width: number,
-  height: number
+  height: number,
+  boardSize: number,
 };
 
 class BoardComponent extends Component<Props, State> {
   innerContainer = createRef();
-  state = {};
+
+  state = {
+    width: 0,
+    height: 0,
+    boardSize: 0,
+  };
 
   componentDidMount(): void {
-    const boardSize = this.innerContainer.current.clientWidth;
-    const width = boardSize / 4;
-    const height = boardSize / 4;
+    const containerEl = this.innerContainer.current;
+    if (containerEl) {
+      const boardSize = containerEl.clientWidth;
+      if (boardSize) {
+        const width = boardSize / 4;
+        const height = boardSize / 4;
 
-    this.setState({
-      boardSize,
-      width,
-      height
-    });
+        this.setState({
+          boardSize,
+          width,
+          height,
+        });
+      }
+    }
 
-    window.addEventListener("resize", this.resizeBoard);
+    window.addEventListener('resize', this.resizeBoard);
   }
+
   componentWillUnmount(): void {
-    window.removeEventListener("resize", this.resizeBoard);
+    window.removeEventListener('resize', this.resizeBoard);
   }
 
   resizeBoard = () => {
-    const boardSize = this.innerContainer.current.clientWidth;
-    const width = boardSize / 4;
-    const height = boardSize / 4;
+    const containerEl = this.innerContainer.current;
+    if (containerEl) {
+      const boardSize = containerEl.clientWidth;
+      const width = boardSize / 4;
+      const height = boardSize / 4;
 
-    this.setState({
-      boardSize,
-      width,
-      height
-    });
+      this.setState({
+        boardSize,
+        width,
+        height,
+      });
+    }
   };
 
-  move = (line, column) => {
-    const { numbers } = this.props;
-    const { nullLine, nullCol } = getNullCell(numbers);
+  onMove = (line, column) => {
+    const { numbers, move } = this.props;
+    const { nullLine, nullColumn } = getNullCell(numbers);
     const movable = {
       lineM: line,
-      columnM: column
+      columnM: column,
     };
     const nullable = {
       lineN: nullLine,
-      columnN: nullCol
+      columnN: nullColumn,
     };
 
     const direction = getDirection(movable, nullable);
-    this.props.moveTile(direction);
+    move(direction);
   };
 
   render() {
-    const { matrix } = this.props;
+    const { numbers } = this.props;
     const { width, height, boardSize } = this.state;
 
-    const { prevStep, nextStep, newGame } = this.props;
+    const { prev, next, startNewGame, isStarted, direction } = this.props;
 
     return (
-      <FullContainer tabIndex="1">
+      <FullContainer tabIndex="0">
         <Container size={boardSize}>
           <MatrixContainer ref={this.innerContainer}>
-            {this.props.isStarted ? (
+            {isStarted ? (
               <Fragment>
                 {width && height && boardSize && (
                   <Matrix
                     width={width}
                     height={height}
                     boardSize={boardSize}
-                    matrix={matrix}
-                    move={this.move}
-                    direction={this.props.direction}
+                    matrix={numbers}
+                    move={this.onMove}
+                    direction={direction}
                   />
                 )}
               </Fragment>
             ) : (
-              <NewGame onClick={newGame}>New Game</NewGame>
+              <NewGame onClick={startNewGame}>New Game</NewGame>
             )}
           </MatrixContainer>
         </Container>
-        <Tools newGame={newGame} prevStep={prevStep} nextStep={nextStep} />
+        <Tools newGame={startNewGame} prevStep={prev} nextStep={next} />
         <WinnerDialog />
       </FullContainer>
     );
   }
 }
 
-const mapStateToProps = (state: GameState) => {
-  const { counter, matrix, steps, isStarted } = state.game;
+const mapStateToProps = state => {
+  const { counter, steps, isStarted } = state.game;
 
   return {
-    matrix,
     counter,
     steps,
     isStarted,
   };
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-  return {
-    moveTile: direction => dispatch(moveTile(direction)),
-    newGame: () => dispatch(newGame(shuffle(ownProps.numbers, ownProps.size))),
-    nextStep: () => dispatch(nextStep()),
-    prevStep: () => dispatch(prevStep())
-  };
-};
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  move: direction => dispatch(moveTile(direction)),
+  startNewGame: () =>
+    dispatch(newGame(shuffle(ownProps.numbers, ownProps.size))),
+  next: () => dispatch(nextStep()),
+  prev: () => dispatch(prevStep()),
+});
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(TouchHoc(BoardComponent));

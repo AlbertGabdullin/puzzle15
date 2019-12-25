@@ -1,15 +1,16 @@
+// @flow
 // flow
-import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
-import Confetti from "react-confetti";
-import isEqual from "lodash/isEqual";
-import Modal from "../../components/Modal";
-import { MATRIX } from "../../consts/matrix";
-import type { GameMatrix } from "../../types";
+import React, { Fragment, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import Confetti from 'react-confetti';
+import isEqual from 'lodash/isEqual';
+import Modal from '../../components/Modal';
+import { MATRIX } from '../../consts/matrix';
+import type { GameMatrix } from '../../types';
 
 type Props = {
   matrix: GameMatrix,
-  isStarted: boolean
+  isStarted: boolean,
 };
 
 const WinnerDialog = ({ matrix, isStarted }: Props) => {
@@ -37,10 +38,10 @@ const WinnerDialog = ({ matrix, isStarted }: Props) => {
 
 const mapStateToProps = state => ({
   matrix: state.game.matrix,
-  isStarted: state.game.isStarted
+  isStarted: state.game.isStarted,
 });
 
 export default connect(
   mapStateToProps,
-  null
+  null,
 )(WinnerDialog);

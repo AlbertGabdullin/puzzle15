@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+// @flow
+import React, { useEffect, useState } from 'react';
+import type { GameMatrix } from '../types';
 
-const useTouchMovement = (moveTile: string => void) => {
-  const [direction, setDirection] = useState({ moveDirection: "" });
-  let touchStartX, touchStartY;
+const useTouchMovement = (move: string => GameMatrix) => {
+  const [direction, setDirection] = useState({ moveDirection: '' });
+  let touchStartX;
+  let touchStartY;
 
   const onTouchStart = e => {
     touchStartX = e.touches[0].clientX;
@@ -19,18 +22,23 @@ const useTouchMovement = (moveTile: string => void) => {
     const absY = Math.abs(dY);
 
     if (Math.max(absX, absY) > 10) {
-      const newDirection =
-        absX > absY ? (dX > 0 ? "right" : "left") : dY > 0 ? "bottom" : "top";
+      let newDirection = '';
+      if (absX > absY) {
+        newDirection = dX > 0 ? 'right' : 'left';
+      } else {
+        newDirection = dY > 0 ? 'bottom' : 'top';
+      }
+
       setDirection({
-        moveDirection: newDirection
+        moveDirection: newDirection,
       });
     }
   };
 
   const onKeyDown = e => {
-    let newDirection = "";
+    let newDirection = '';
     const { keyCode } = e;
-    switch(keyCode) {
+    switch (keyCode) {
       case 38:
       case 87:
         newDirection = 'top';
@@ -56,15 +64,15 @@ const useTouchMovement = (moveTile: string => void) => {
   };
 
   const listenEvents = () => {
-    document.addEventListener("touchstart", onTouchStart);
-    document.addEventListener("touchend", onTouchEnd);
-    document.addEventListener("keydown", onKeyDown);
+    window.addEventListener('touchstart', onTouchStart);
+    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('keydown', onKeyDown);
   };
 
   const removeEvents = () => {
-    document.removeEventListener("touchstart", onTouchStart);
-    document.removeEventListener("touchend", onTouchEnd);
-    document.removeEventListener("keydown", onKeyDown);
+    window.removeEventListener('touchstart', onTouchStart);
+    window.removeEventListener('touchend', onTouchEnd);
+    window.removeEventListener('keydown', onKeyDown);
   };
 
   useEffect(() => {
@@ -73,13 +81,19 @@ const useTouchMovement = (moveTile: string => void) => {
   });
 
   useEffect(() => {
-    moveTile(direction.moveDirection);
+    move(direction.moveDirection);
   }, [direction]);
 };
 
-const TouchHoc = ChildrenComponents => props => {
-  const { moveTile } = props;
-  useTouchMovement(moveTile);
+type Props = {
+  move: string => GameMatrix,
+};
+
+const TouchHoc = (ChildrenComponents: React$ComponentType<any>) => (
+  props: Props,
+) => {
+  const { move } = props;
+  useTouchMovement(move);
   return <ChildrenComponents {...props} />;
 };
 

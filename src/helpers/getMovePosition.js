@@ -1,17 +1,18 @@
-const getPosition = (direction: string, nullPosition: Object<number, number>) => {
-  const { nullLine, nullCol } = nullPosition;
+// @flow
+const getPosition = (direction: string, nullPosition: Object) => {
+  const { nullLine, nullColumn } = nullPosition;
 
-  switch(direction) {
+  switch (direction) {
     case 'top':
-      return [nullLine + 1, nullCol];
+      return [nullLine + 1, nullColumn];
     case 'bottom':
-      return [nullLine - 1, nullCol];
+      return [nullLine - 1, nullColumn];
     case 'left':
-      return [nullLine, nullCol + 1];
+      return [nullLine, nullColumn + 1];
     case 'right':
-      return [nullLine, nullCol - 1];
+      return [nullLine, nullColumn - 1];
     default:
-      return [nullLine, nullCol];
+      return [nullLine, nullColumn];
   }
 };
 

@@ -1,27 +1,21 @@
-import type {
-  GameMatrix,
-  GameState
-} from "../types";
+// @flow
+import type { GameMatrix } from '../types';
+import { MOVE_TILE, NEW_GAME, NEXT_STEP, PREV_STEP } from '../types';
 
-export const NEW_GAME = 'NEW_GAME';
-export const MOVE_TILE = 'MOVE_TILE';
-export const NEXT_STEP = 'NEXT_STEP';
-export const PREV_STEP = 'PREV_STEP';
-
-export const newGame = (numbers: GameMatrix):GameState => ({
+export const newGame = (numbers: GameMatrix) => ({
   type: NEW_GAME,
   payload: numbers,
 });
 
-export const moveTile = (direction):GameMatrix => ({
+export const moveTile = (direction: string) => ({
   type: MOVE_TILE,
-  payload: direction
+  payload: direction,
 });
 
-export const nextStep = ():GameState => ({
+export const nextStep = () => ({
   type: NEXT_STEP,
 });
 
-export const prevStep = ():GameState => ({
+export const prevStep = () => ({
   type: PREV_STEP,
 });

@@ -1,9 +1,18 @@
+const fs = require('fs');
+
+const prettierOptions = JSON.parse(
+  fs.readFileSync(__dirname + '/.prettierrc', 'utf8'),
+);
+
 module.exports = {
+  parser: 'babel-eslint',
   env: {
     browser: true,
+    node: true,
+    jest: true,
     es6: true,
   },
-  extends: ['airbnb', 'prettier'],
+  extends: ['airbnb', 'prettier', 'prettier/flowtype', 'prettier/react'],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
@@ -11,74 +20,53 @@ module.exports = {
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
+      modules: true,
     },
     ecmaVersion: 2018,
     sourceType: 'module',
   },
-  plugins: [
-    'react',
-    'flowtype',
-  ],
+  plugins: ['react', 'flowtype', 'prettier', 'react-hooks', 'jsx-a11y'],
   rules: {
-    "flowtype/boolean-style": [
-      2,
-      "boolean"
-    ],
-    "flowtype/define-flow-type": 1,
-    "flowtype/delimiter-dangle": [
-      2,
-      "never"
-    ],
-    "flowtype/generic-spacing": [
-      2,
-      "never"
-    ],
-    "flowtype/no-primitive-constructor-types": 2,
-    "flowtype/no-types-missing-file-annotation": 2,
-    "flowtype/no-weak-types": 2,
-    "flowtype/object-type-delimiter": [
-      2,
-      "comma"
-    ],
-    "flowtype/require-parameter-type": 2,
-    "flowtype/require-return-type": [
-      2,
-      "always",
-      {
-        "annotateUndefined": "never"
-      }
-    ],
-    "flowtype/require-valid-file-annotation": 2,
-    "flowtype/semi": [
-      2,
-      "always"
-    ],
-    "flowtype/space-after-type-colon": [
-      2,
-      "always"
-    ],
-    "flowtype/space-before-generic-bracket": [
-      2,
-      "never"
-    ],
-    "flowtype/space-before-type-colon": [
-      2,
-      "never"
-    ],
-    "flowtype/type-id-match": [
-      2,
-      "^([A-Z][a-z0-9]+)+Type$"
-    ],
-    "flowtype/union-intersection-spacing": [
-      2,
-      "always"
-    ],
-    "flowtype/use-flow-type": 1,
-    "flowtype/valid-syntax": 1
+    'prettier/prettier': ['error', prettierOptions],
+    'arrow-body-style': [2, 'as-needed'],
+    'class-methods-use-this': 0,
+    allowForLoopAfterthoughts: true,
+    'import/imports-first': 0,
+    'import/newline-after-import': 0,
+    'import/no-dynamic-require': 0,
+    'import/no-extraneous-dependencies': 0,
+    'import/no-named-as-default': 0,
+    'import/no-unresolved': 2,
+    'import/no-webpack-loader-syntax': 0,
+    'import/prefer-default-export': 0,
+    'jsx-a11y/aria-props': 2,
+    'jsx-a11y/heading-has-content': 0,
+    'jsx-a11y/label-has-for': 2,
+    'jsx-a11y/mouse-events-have-key-events': 2,
+    'jsx-a11y/role-has-required-aria-props': 2,
+    'jsx-a11y/role-supports-aria-props': 2,
+    'jsx-a11y/anchor-is-valid': 0,
+    'max-len': 0,
+    'newline-per-chained-call': 0,
+    'no-confusing-arrow': 0,
+    'no-console': 1,
+    'no-use-before-define': 0,
+    'prefer-template': 2,
+    'react/jsx-closing-tag-location': 0,
+    'react/forbid-prop-types': 0,
+    'react/jsx-filename-extension': 0,
+    'react/jsx-no-target-blank': 0,
+    'react/require-default-props': 0,
+    'react/require-extension': 0,
+    'react/self-closing-comp': 0,
+    'react/sort-comp': 0,
+    'react/default-props-match-prop-types': 0,
+    'react/no-array-index-key': 0,
+    'react/no-multi-comp': 0,
+    'require-yield': 0,
+
+    'react/prop-types': 0,
+    'flowtype/require-valid-file-annotation': [2, 'never'],
+    'flowtype/define-flow-type': 1,
   },
-  settings: {
-    "flowtype": {
-      "onlyFilesWithFlowAnnotation": false
-    }
-  }
 };

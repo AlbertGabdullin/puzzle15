@@ -1,15 +1,24 @@
 // @flow
-import React, { Fragment } from "react";
-import memoize from "memoize-one";
-import { Motion, spring } from "react-motion";
-import Tile from "../Tile";
-import type { GameMatrix } from "../../types";
+import React, { Fragment } from 'react';
+import memoize from 'memoize-one';
+import { Motion, spring } from 'react-motion';
+import Tile from '../Tile';
+import type { GameMatrix } from '../../types';
 
 const getStyles = memoize(
-  (boardSize: number, width: number, height: number, index: number, springConfig: Object) => ({
+  (
+    boardSize: number,
+    width: number,
+    height: number,
+    index: number,
+    springConfig: Object,
+  ) => ({
     tX: spring(boardSize * (width / boardSize) * (index % 4), springConfig),
-    tY: spring(boardSize * (height / boardSize) * Math.floor(index / 4), springConfig)
-  })
+    tY: spring(
+      boardSize * (height / boardSize) * Math.floor(index / 4),
+      springConfig,
+    ),
+  }),
 );
 
 type Props = {
@@ -17,7 +26,7 @@ type Props = {
   width: number,
   height: number,
   boardSize: number,
-  move: (line: number, column: number) => GameMatrix
+  move: (line: number, column: number) => void,
 };
 
 const Matrix = ({ matrix, width, height, boardSize, move }: Props) => {
@@ -27,13 +36,13 @@ const Matrix = ({ matrix, width, height, boardSize, move }: Props) => {
       const el = {
         number: child,
         line,
-        column
+        column,
       };
       newArray.push(el);
     });
   });
 
-  const springConfig = {stiffness: 120, damping: 15};
+  const springConfig = { stiffness: 120, damping: 15 };
   // $FlowFixMe
   const tiles = newArray.map((item, index) => {
     const style = getStyles(boardSize, width, height, index, springConfig);

@@ -1,14 +1,15 @@
 // @flow
-import isEmpty from "lodash/isEmpty";
-import { MOVE_TILE, NEW_GAME, NEXT_STEP, PREV_STEP } from "../actions";
-import getNullCell from "../helpers/getNullCell";
-import getPosition from "../helpers/getMovePosition";
-import { MATRIX } from "../consts/matrix";
-import shuffle from "../helpers/shuffle";
-import { bake_cookie, read_cookie, delete_cookie } from "sfcookies";
-import type { GameState } from "../types";
+import isEmpty from 'lodash/isEmpty';
+// eslint-disable-next-line camelcase
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import { MOVE_TILE, NEW_GAME, NEXT_STEP, PREV_STEP } from '../types';
+import getNullCell from '../helpers/getNullCell';
+import getPosition from '../helpers/getMovePosition';
+import { MATRIX } from '../consts/matrix';
+import shuffle from '../helpers/shuffle';
+import type { Actions, GameState } from '../types';
 
-const initialStateFromCookie = read_cookie("puzzle15");
+const initialStateFromCookie = read_cookie('puzzle15');
 
 const initialState = !isEmpty(initialStateFromCookie)
   ? initialStateFromCookie
@@ -18,10 +19,10 @@ const initialState = !isEmpty(initialStateFromCookie)
       steps: [],
       size: [3, 3],
       index: 0,
-      counter: 0
+      counter: 0,
     };
 
-const game = (state: GameState = initialState, action) => {
+const game = (state: GameState = initialState, action: Actions) => {
   switch (action.type) {
     case MOVE_TILE: {
       let newMatrix = [];
@@ -34,16 +35,16 @@ const game = (state: GameState = initialState, action) => {
         return state;
       }
 
-      const { nullLine, nullCol } = nullPosition;
-      const columnMod = Math.abs(column - nullCol);
+      const { nullLine, nullColumn } = nullPosition;
+      const columnMod = Math.abs(column - nullColumn);
       const lineMod = Math.abs(line - nullLine);
 
       if (
         (line === nullLine && columnMod === 1) ||
-        (column === nullCol && lineMod === 1)
+        (column === nullColumn && lineMod === 1)
       ) {
-        const temp = matrix[nullLine][nullCol];
-        matrix[nullLine][nullCol] = matrix[line][column];
+        const temp = matrix[nullLine][nullColumn];
+        matrix[nullLine][nullColumn] = matrix[line][column];
         matrix[line][column] = temp;
         newMatrix = matrix;
       }
@@ -54,10 +55,10 @@ const game = (state: GameState = initialState, action) => {
         matrix: [...newMatrix],
         counter: counter + 1,
         index: index + 1,
-        steps: [...steps, { line, column }]
+        steps: [...steps, { line, column }],
       };
 
-      bake_cookie("puzzle15", newState);
+      bake_cookie('puzzle15', newState);
 
       return newState;
     }
@@ -65,7 +66,7 @@ const game = (state: GameState = initialState, action) => {
     case NEW_GAME: {
       const { matrix } = state;
       const newMatrix = action.payload;
-      const { nullLine, nullCol } = getNullCell(matrix);
+      const { nullLine, nullColumn } = getNullCell(matrix);
       const newState = {
         ...state,
         matrix: [...newMatrix],
@@ -75,11 +76,11 @@ const game = (state: GameState = initialState, action) => {
         steps: [
           {
             line: nullLine,
-            column: nullCol
-          }
-        ]
+            column: nullColumn,
+          },
+        ],
       };
-      delete_cookie("puzzle15");
+      delete_cookie('puzzle15');
       return newState;
     }
     case NEXT_STEP: {
@@ -89,16 +90,16 @@ const game = (state: GameState = initialState, action) => {
       const nextIndex = index < lastIndex ? index + 1 : lastIndex;
       const { line, column } = steps[nextIndex];
 
-      const { nullLine, nullCol } = getNullCell(matrix);
-      const columnMod = Math.abs(column - nullCol);
+      const { nullLine, nullColumn } = getNullCell(matrix);
+      const columnMod = Math.abs(column - nullColumn);
       const lineMod = Math.abs(line - nullLine);
 
       if (
         (line === nullLine && columnMod === 1) ||
-        (column === nullCol && lineMod === 1)
+        (column === nullColumn && lineMod === 1)
       ) {
-        const temp = matrix[nullLine][nullCol];
-        matrix[nullLine][nullCol] = matrix[line][column];
+        const temp = matrix[nullLine][nullColumn];
+        matrix[nullLine][nullColumn] = matrix[line][column];
         matrix[line][column] = temp;
         newMatrix = matrix;
       }
@@ -107,10 +108,10 @@ const game = (state: GameState = initialState, action) => {
       const newState = {
         ...state,
         matrix: [...newMatrix],
-        index: index < steps.length - 1 ? index + 1 : steps.length - 1
+        index: index < steps.length - 1 ? index + 1 : steps.length - 1,
       };
 
-      bake_cookie("puzzle15", newState);
+      bake_cookie('puzzle15', newState);
       return newState;
     }
     case PREV_STEP: {
@@ -118,16 +119,16 @@ const game = (state: GameState = initialState, action) => {
       const { index, steps, matrix } = state;
       const prevIndex = index > 0 ? index - 1 : 0;
       const { line, column } = steps[prevIndex];
-      const { nullLine, nullCol } = getNullCell(matrix);
-      const columnMod = Math.abs(column - nullCol);
+      const { nullLine, nullColumn } = getNullCell(matrix);
+      const columnMod = Math.abs(column - nullColumn);
       const lineMod = Math.abs(line - nullLine);
 
       if (
         (line === nullLine && columnMod === 1) ||
-        (column === nullCol && lineMod === 1)
+        (column === nullColumn && lineMod === 1)
       ) {
-        const temp = matrix[nullLine][nullCol];
-        matrix[nullLine][nullCol] = matrix[line][column];
+        const temp = matrix[nullLine][nullColumn];
+        matrix[nullLine][nullColumn] = matrix[line][column];
         matrix[line][column] = temp;
         newMatrix = matrix;
       }
@@ -136,10 +137,10 @@ const game = (state: GameState = initialState, action) => {
       const newState = {
         ...state,
         matrix: [...newMatrix],
-        index: prevIndex
+        index: prevIndex,
       };
 
-      bake_cookie("puzzle15", newState);
+      bake_cookie('puzzle15', newState);
 
       return newState;
     }

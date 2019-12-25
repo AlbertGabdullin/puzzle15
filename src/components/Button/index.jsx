@@ -1,4 +1,4 @@
-//@flow
+// @flow
 import React, { createElement } from 'react';
 import styled from 'styled-components';
 import * as items from './items';
@@ -21,17 +21,10 @@ const ButtonWrap = styled.div`
 type Props = {
   onClick: () => void,
   name: string,
-}
-
-const Button = ({
-  onClick,
-  name,
-}: Props) => {
-  return (
-    <ButtonWrap onClick={onClick}>
-      {createElement(items[name])}
-    </ButtonWrap>
-  )
 };
+
+const Button = ({ onClick, name }: Props) => (
+  <ButtonWrap onClick={onClick}>{createElement(items[name])}</ButtonWrap>
+);
 
 export default Button;
