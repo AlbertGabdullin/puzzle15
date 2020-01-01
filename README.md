@@ -7,6 +7,6 @@ The 15-puzzle (also called Gem Puzzle, Boss Puzzle, Game of Fifteen, Mystic Squa
 puzzle that consists of a frame of numbered square tiles in random order with one tile missing.
 The object of the puzzle is to place the tiles in order by making sliding moves that use the empty space.
 
-##Preview
+## Preview
 If you want to play the game right now, then you can do it [here](https://albertgabdullin.github.io/puzzle15/).</br>
 ![Game preview gif](game.gif)
