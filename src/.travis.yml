@@ -1,9 +1,5 @@
 language: node_js
-node_js:
-  - "stable"
-cache:
-  directories:
-    - node_modules
-script:
-  - yarn lint
-  - yarn flow
+sudo: false
+cache: yarn
+node_js: 10
+script: yarn lint && yarn flow
