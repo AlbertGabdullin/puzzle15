@@ -1,5 +1,2 @@
 language: node_js
-sudo: false
-cache: yarn
 node_js: 10
-script: yarn lint && yarn flow
