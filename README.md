@@ -8,4 +8,5 @@ puzzle that consists of a frame of numbered square tiles in random order with on
 The object of the puzzle is to place the tiles in order by making sliding moves that use the empty space.
 
 ##Preview
+If you want to play the game right now, then you can do it [here](https://albertgabdullin.github.io/puzzle15/).</br>
 ![Game preview gif](game.gif)
