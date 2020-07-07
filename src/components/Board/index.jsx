@@ -34,6 +34,7 @@ export const FullContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+  overflow-y: hidden;
   flex-direction: column;
   background-image: url(${Background});
   background-repeat: no-repeat;
