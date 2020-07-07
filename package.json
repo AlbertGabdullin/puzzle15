@@ -5,6 +5,7 @@
   "dependencies": {
     "flow": "^0.2.3",
     "flow-bin": "^0.95.1",
+    "framer-motion": "^1.11.1",
     "gh-pages": "^2.0.1",
     "lodash": "^4.17.15",
     "memoize-one": "^5.0.5",

@@ -1,9 +1,10 @@
 // @flow
-import React from 'react';
+import React, { memo } from 'react';
+import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import numberBackground from '../../static/numberBackground.svg';
 
-const TileWrapper = styled.div`
+const TileWrapper = styled(motion.div)`
   position: absolute;
   z-index: 1;
   background: #fff;
@@ -38,24 +39,29 @@ const Square = styled.div`
 
 type Props = {
   move: (line: number, column: number) => void,
-  tX: number,
-  tY: number,
-  item: {
-    line: number,
-    column: number,
-    number: number,
-  },
+  x: number,
+  y: number,
+  line: number,
+  column: number,
+  number: number,
 };
 
-const Tile = ({ item, move, tX, tY }: Props) => (
-  <TileWrapper
-    onClick={() => move(item.line, item.column)}
-    style={{
-      transform: `translate(${tX}px,${tY}px) scale(1.0)`,
-    }}
-  >
-    <Square key={item.number}>{item.number}</Square>
-  </TileWrapper>
-);
+const Tile = memo<Props>(({ x, y, number, line, column, move }: Props) => {
+  if (number === 0) {
+    return null;
+  }
+  return (
+    <TileWrapper
+      animate={{
+        x,
+        y,
+      }}
+      transition={{ type: 'tween' }}
+      onClick={() => move(line, column)}
+    >
+      <Square key={number}>{number}</Square>
+    </TileWrapper>
+  );
+});
 
 export default Tile;
